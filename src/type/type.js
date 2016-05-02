@@ -6,6 +6,7 @@ import {
 import {
   globalIdField,
   connectionArgs,
+  connectionFromArray,
   connectionDefinitions,
   nodeDefinitions
 } from 'graphql-relay';
@@ -220,8 +221,20 @@ function getType(graffitiModels, {name, description, fields}, path = [], rootTyp
       if (subtype === 'Object') {
         const fields = subfields;
         const nestedObjectName = getTypeFieldName(graphQLType.name, name);
-        graphQLField.type = new GraphQLList(
-          getType(graffitiModels, {name: nestedObjectName, description, fields}, newPath, rootType));
+
+        const nestedObjectType = getType(graffitiModels, {name: nestedObjectName, description, fields}, newPath, rootType);
+        const {
+          connectionType: nestedObjectConnection,
+          edgeType: nestedObjectEdge,
+        } = connectionDefinitions({
+          name: nestedObjectName,
+          nodeType: nestedObjectType,
+        });
+
+        graphQLField.type = nestedObjectConnection
+        graphQLField.args = { ...connectionArgs }
+        graphQLField.resolve = 
+          (obj, args, c) => connectionFromArray(obj.chapters, args)
       } else {
         graphQLField.type = new GraphQLList(stringToGraphQLType(subtype));
         if (reference) {
