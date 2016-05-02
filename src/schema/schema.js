@@ -220,8 +220,12 @@ function getMutationField(graffitiModel, type, viewer, hooks = {}, allowMongoIDM
  */
 function getFields(graffitiModels, {
     hooks = {}, mutation = true, allowMongoIDMutation = false,
-    customQueries = {}, customMutations = {}
+    customQueries = false, customMutations = false
   } = {}) {
+
+  if (customQueries === false) customQueries = () => {}
+  if (customMutations === false) customMutations = () => {}
+
   const types = type.getTypes(graffitiModels);
   const {viewer, singular} = hooks;
 
@@ -258,8 +262,8 @@ function getFields(graffitiModels, {
       }
     };
   }, {
-    queries: customQueries,
-    mutations: customMutations
+    queries: customQueries(types),
+    mutations: customMutations(types)
   });
 
   const RootQuery = new GraphQLObjectType({
