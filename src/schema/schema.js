@@ -1,4 +1,4 @@
-import {reduce, isArray} from 'lodash';
+import {reduce, isArray, isFunction} from 'lodash';
 import {
   GraphQLList,
   GraphQLNonNull,
@@ -220,11 +220,8 @@ function getMutationField(graffitiModel, type, viewer, hooks = {}, allowMongoIDM
  */
 function getFields(graffitiModels, {
     hooks = {}, mutation = true, allowMongoIDMutation = false,
-    customQueries = false, customMutations = false
+    customQueries = {}, customMutations = {}
   } = {}) {
-
-  if (customQueries === false) customQueries = () => {}
-  if (customMutations === false) customMutations = () => {}
 
   const types = type.getTypes(graffitiModels);
   const {viewer, singular} = hooks;
@@ -262,8 +259,8 @@ function getFields(graffitiModels, {
       }
     };
   }, {
-    queries: customQueries(types),
-    mutations: customMutations(types)
+    queries: isFunction(customQueries) ? customQueries(types) : customQueries,
+    mutations: isFunction(customMutations) ? customMutations(types) : customMutations
   });
 
   const RootQuery = new GraphQLObjectType({
