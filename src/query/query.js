@@ -338,5 +338,6 @@ export {
   getUpdateOneMutateHandler,
   getDeleteOneMutateHandler,
   getListResolver,
-  connectionFromModel
+  connectionFromModel,
+  processId
 };
