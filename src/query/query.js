@@ -325,7 +325,8 @@ export default {
   getListResolver,
   getAddOneMutateHandler,
   getUpdateOneMutateHandler,
-  getDeleteOneMutateHandler
+  getDeleteOneMutateHandler,
+  processId
 };
 
 export {
